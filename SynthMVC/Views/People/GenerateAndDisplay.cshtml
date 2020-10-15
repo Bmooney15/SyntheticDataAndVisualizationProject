@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "GenerateAndDisplay";
+}
+
+<h2>GenerateAndDisplay</h2>
+
+
+<script src="//code.jquery.com/jquery-3.3.1.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetData", "PeopleController")',
+            type: "GET",
+            success: function (result) {
+                console.log(JSON.stringify(result));
+            }
+        });
+    });
+</script>
+
