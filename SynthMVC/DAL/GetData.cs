@@ -190,13 +190,13 @@ namespace SynthMVC.DAL
             {
                 PeoplePerState temp = new PeoplePerState();
                 temp.State = (States)i;
-                temp.PeopleInState = new List<Person>(people.Count());
+                 // initialize list to size of total population
                 stateList.Add(temp);
             }
            
             for(int j = 0; j < people.Count(); j++)
             {
-                stateList[(int)(people[j].State) - 1].PeopleInState.Add(people[j]); // add people into lists in their respective states
+               // add people into lists in their respective states
             }
             return stateList;
         }

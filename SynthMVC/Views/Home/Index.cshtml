@@ -167,7 +167,7 @@
         d3.json("/People/CalculateSyntheticDataStats", function (data) {
             var dataArray = [];
             for (var d = 0; d < data.length; d++) {
-                dataArray.push(parseFloat(data[d].PeopleInState.length))
+                dataArray.push(parseFloat(data[d].Population))
             }
             var minVal = d3.min(dataArray)
             var maxVal = d3.max(dataArray)
@@ -182,9 +182,9 @@
 
                     // Grab State Name
                     var dataState = data[i].State;
-                    totalPop = totalPop + data[i].PeopleInState.length;
+                    totalPop = totalPop + data[i].Population;
                     // Grab data value
-                    var dataValue = data[i].PeopleInState.length;
+                    var dataValue = data[i].Population;
 
                     // Find the corresponding state inside the GeoJSON
                     for (var j = 0; j < json.features.length; j++) {

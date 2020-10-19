@@ -141,9 +141,9 @@ namespace SynthMVC.Controllers
         [HttpGet]
         public ActionResult CalculateSyntheticDataStats()
         {
-            var temp = GetData.GetStateStatsFromPeople(db.People.ToList());
+            var genStates = db.GeneratedStateStats;
 
-            return Json(temp, JsonRequestBehavior.AllowGet);
+            return Json(genStates, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace SynthMVC.DAL
 
         public DbSet<Person> People { get; set; }
         public DbSet<StateData> States { get; set; }
+        public DbSet<PeoplePerState> GeneratedStateStats { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

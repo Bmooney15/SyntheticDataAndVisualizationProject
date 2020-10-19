@@ -20,8 +20,14 @@ namespace SynthMVC.DAL
                          "DP03_0060PE,DP03_0061PE&for=state:*"; // get selected statistics from 2018 American Community Survey (breakdown by gender, age, race, and income)
             string jsonUrl = "https://api.census.gov/data/2018/acs/acs1/profile/variables.json"; // url to get variable names for statistics
             DataTable dtDemographics = GetData.getData(url, jsonUrl); // parse census data into DataTable
-            StateInitialization(dtDemographics).ForEach(s => context.States.Add(s));
-            PersonGenerator(2500, dtDemographics).ForEach(p => context.People.Add(p));
+
+            StateInitialization(dtDemographics).ForEach(s => context.States.Add(s)); // create a list of states and their actual demographic and economic statistics, used later to create a visualization to compare against generated data
+
+            List<Person> people = PersonGenerator(2500, dtDemographics);
+            people.ForEach(p => context.People.Add(p)); // generate a table of people based on census statistics
+
+            CalculateGeneratedPopulationStats(people).ForEach(s => context.GeneratedStateStats.Add(s)); // create a list of states and their generated demographic and economic statistics, used later to create a visualization to compare against actual data
+
             context.SaveChanges();
         }
 
@@ -126,6 +132,160 @@ namespace SynthMVC.DAL
 
             return people;
         } 
+
+        private List<PeoplePerState> CalculateGeneratedPopulationStats(List<Person> people) // given a table of people, calculate the economic and demographic statistics of the population in the table
+        {
+            List<PeoplePerState> stateList = new List<PeoplePerState>(53);
+            int totalPop = people.Count();
+
+            for(int i = 1; i < 53; i++) // iterate through the list and initialize members with state names
+            {
+                PeoplePerState initState = new PeoplePerState();
+                initState.State = (States)i;
+                stateList.Add(initState);
+            }
+            for(int j = 0; j < people.Count(); j++)
+            {
+                stateList[(int)(people[j].State) - 1].Population = stateList[(int)(people[j].State) - 1].Population + 1;
+
+                if (people[j].Gender == GenderTypes.Female)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalSexFemale = stateList[(int)(people[j].State) - 1].TotalSexFemale + 1;
+                } else
+                {
+                    stateList[(int)(people[j].State) - 1].TotalSexMale = stateList[(int)(people[j].State) - 1].TotalSexMale + 1;
+                }
+
+                if(people[j].Age < 5)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAgeUnder5 = stateList[(int)(people[j].State) - 1].TotalAgeUnder5 + 1;
+                }
+                else if(people[j].Age >= 5 && people[j].Age <= 9)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge5To9 = stateList[(int)(people[j].State) - 1].TotalAge5To9 + 1;
+                }
+                else if (people[j].Age >= 10 && people[j].Age <= 14)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge10To14 = stateList[(int)(people[j].State) - 1].TotalAge10To14 + 1;
+                }
+                else if (people[j].Age >= 15 && people[j].Age <= 19)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge15To19 = stateList[(int)(people[j].State) - 1].TotalAge15To19 + 1;
+                }
+                else if (people[j].Age >= 20 && people[j].Age <= 24)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge20To24 = stateList[(int)(people[j].State) - 1].TotalAge20To24 + 1;
+                }
+                else if (people[j].Age >= 25 && people[j].Age <= 34)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge25To34 = stateList[(int)(people[j].State) - 1].TotalAge25To34 + 1;
+                }
+                else if (people[j].Age >= 35 && people[j].Age <= 44)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge35To44 = stateList[(int)(people[j].State) - 1].TotalAge35To44 + 1;
+                }
+                else if (people[j].Age >= 45 && people[j].Age <= 54)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge45To54 = stateList[(int)(people[j].State) - 1].TotalAge45To54 + 1;
+                }
+                else if (people[j].Age >= 55 && people[j].Age <= 59)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge55To59 = stateList[(int)(people[j].State) - 1].TotalAge55To59 + 1;
+                }
+                else if (people[j].Age >= 60 && people[j].Age <= 64)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge60To64 = stateList[(int)(people[j].State) - 1].TotalAge60To64 + 1;
+                }
+                else if (people[j].Age >= 65 && people[j].Age <= 74)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge65To74 = stateList[(int)(people[j].State) - 1].TotalAge65To74 + 1;
+                }
+                else if (people[j].Age >= 75 && people[j].Age <= 84)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge75To84 = stateList[(int)(people[j].State) - 1].TotalAge75To84 + 1;
+                }
+                else if (people[j].Age >= 85)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalAge85OrOver = stateList[(int)(people[j].State) - 1].TotalAge85OrOver + 1;
+                }
+
+                if(people[j].Income < 10000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncomeLessThan10k++;
+                }
+                else if(people[j].Income < 15000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome10kTo15k++;
+                }
+                else if (people[j].Income < 25000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome15kTo25k++;
+                }
+                else if (people[j].Income < 35000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome25kTo35k++;
+                }
+                else if (people[j].Income < 50000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome35kTo50k++;
+                }
+                else if (people[j].Income < 75000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome50kTo75k++;
+                }
+                else if (people[j].Income < 100000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome75kTo100k++;
+                }
+                else if (people[j].Income < 150000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome100kTo150k++;
+                }
+                else if (people[j].Income < 200000)
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncome150kTo200k++;
+                }
+                else
+                {
+                    stateList[(int)(people[j].State) - 1].TotalIncomeOver200k++;
+                }
+
+                switch (people[j].Race)
+                {
+                    case RaceTypes.White:
+                        stateList[(int)(people[j].State) - 1].TotalRaceWhite++;
+                        break;
+                    case RaceTypes.Black:
+                        stateList[(int)(people[j].State) - 1].TotalRaceBlack++;
+                        break;
+                    case RaceTypes.AmericanIndianOrAlaskan:
+                        stateList[(int)(people[j].State) - 1].TotalRaceAmericanIndianOrAlaskan++;
+                        break;
+                    case RaceTypes.Asian:
+                        stateList[(int)(people[j].State) - 1].TotalRaceAsian++;
+                        break;
+                    case RaceTypes.NativeHawaiianOrPacificIslander:
+                        stateList[(int)(people[j].State) - 1].TotalRaceNativeHawaiianOrPacificIslander++;
+                        break;
+                    case RaceTypes.Other:
+                        stateList[(int)(people[j].State) - 1].TotalRaceOther++;
+                        break;
+                    case RaceTypes.WhiteAndBlack:
+                        stateList[(int)(people[j].State) - 1].TotalRaceWhiteAndBlack++;
+                        break;
+                    case RaceTypes.WhiteAndAmericanIndianOrAlaskan:
+                        stateList[(int)(people[j].State) - 1].TotalRaceWhiteAndAmericanIndianOrAlaskan++;
+                        break;
+                    case RaceTypes.WhiteAndAsian:
+                        stateList[(int)(people[j].State) - 1].TotalRaceWhiteAndAsian++;
+                        break;
+                    case RaceTypes.BlackAndAmericanIndianOrAlaskan:
+                        stateList[(int)(people[j].State) - 1].TotalRaceBlackAndAmericanIndianOrAlaskan++;
+                        break;
+                }
+            }
+            return stateList;
+        }
 
        
     }
