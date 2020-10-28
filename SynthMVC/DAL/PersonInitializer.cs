@@ -23,7 +23,7 @@ namespace SynthMVC.DAL
 
             StateInitialization(dtDemographics).ForEach(s => context.States.Add(s)); // create a list of states and their actual demographic and economic statistics, used later to create a visualization to compare against generated data
 
-            List<Person> people = PersonGenerator(2500, dtDemographics);
+            List<Person> people = PersonGenerator(5000, dtDemographics);
             people.ForEach(p => context.People.Add(p)); // generate a table of people based on census statistics
 
             CalculateGeneratedPopulationStats(people).ForEach(s => context.GeneratedStateStats.Add(s)); // create a list of states and their generated demographic and economic statistics, used later to create a visualization to compare against actual data
@@ -81,6 +81,7 @@ namespace SynthMVC.DAL
                             PercentIncome150kTo200k = float.Parse((string)dtDemographics.Rows[i][35]),
                             PercentIncomeOver200k = float.Parse((string)dtDemographics.Rows[i][36])
                         };
+                        
                         stateList.Add(temp);
                         
                     }
@@ -107,8 +108,8 @@ namespace SynthMVC.DAL
             // demographics.Rows[0][1] == population
             States[] stateList = { (States)1, (States)2, (States)3, (States)4, (States)5, (States)6, (States)7, (States)8, (States)9, (States)10, (States)11, (States)12, (States)13,
                 (States)14, (States)15, (States)16, (States)17, (States)18, (States)19, (States)20, (States)21, (States)22, (States)23, (States)24, (States)25, (States)26, (States)27,
-                (States)28, (States)29, (States)30, (States)31, (States)32, (States)33, (States)34, (States)35, (States)36, (States)37, (States)38, (States)39, (States)40, (States)42,
-                (States)43, (States)44, (States)45, (States)46, (States)47, (States)48, (States)49, (States)50, (States)51, (States)52 };
+                (States)28, (States)29, (States)30, (States)31, (States)32, (States)33, (States)34, (States)35, (States)36, (States)37, (States)38, (States)39, (States)40, (States)41,
+                (States)42, (States)43, (States)44, (States)45, (States)46, (States)47, (States)48, (States)49, (States)50, (States)51, (States)52 };
 
             //States[] stateList = { States.WY, States.CA, States.MA, States.TX };
 
