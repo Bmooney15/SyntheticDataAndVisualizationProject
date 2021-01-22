@@ -8,15 +8,17 @@ namespace SynthMVC.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+
+        public ActionResult Visualization()
         {
+            
+
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Index()
         {
             ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
